@@ -12,15 +12,15 @@ _Pragma("once");
     #define SONIXEX_API
 #endif
 
-class SONIXEX_API SonixBeautyWindow : public QQuickWindow
+class SONIXEX_API WinWindow : public QQuickWindow
 {
     Q_OBJECT
-    QML_ELEMENT
+    QML_NAMED_ELEMENT(ZeroWindow)
 public:
-    explicit(true) SonixBeautyWindow(QQuickWindow* _parent = nullptr);
-    ~SonixBeautyWindow() noexcept = default;
+    explicit(true) WinWindow(QQuickWindow* _parent = nullptr);
+    ~WinWindow() noexcept = default;
 
-    static auto instance() noexcept -> SonixBeautyWindow*;
+    static auto instance() noexcept -> WinWindow*;
 
 private:
     auto connectSignal2Slot() noexcept -> void;

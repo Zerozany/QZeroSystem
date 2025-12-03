@@ -1,4 +1,4 @@
-package com.sonixbeauty.module;
+package com.zerosystem.module;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,7 +16,7 @@ import android.net.wifi.WifiNetworkSpecifier;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
-import com.sonixbeauty.utiles.MessageUtile;
+import com.zerosystem.utiles.MessageUtile;
 import java.util.List;
 
 public class WifiModule {

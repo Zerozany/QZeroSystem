@@ -1,9 +1,9 @@
-package com.sonixbeauty.core;
+package com.zerosystem.core;
 
 import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
-import com.sonixbeauty.utiles.MessageUtile;
+import com.zerosystem.utiles.MessageUtile;
 
 public class JNIApplication extends org.qtproject.qt.android.bindings.QtApplication {
 

@@ -1,4 +1,4 @@
-package com.sonixbeauty.system;
+package com.zerosystem.system;
 
 import android.app.Activity;
 import android.os.Build;

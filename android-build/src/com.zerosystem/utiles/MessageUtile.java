@@ -1,4 +1,4 @@
-package com.sonixbeauty.utiles;
+package com.zerosystem.utiles;
 
 public final class MessageUtile {
 

@@ -2,20 +2,20 @@ _Pragma("once");
 #include <QQuickWindow>
 #include <QtQml/qqmlregistration.h>
 
-class SonixBeautyWindow : public QQuickWindow
+class AndroidWindow : public QQuickWindow
 {
     Q_OBJECT
-    QML_ELEMENT
+    QML_NAMED_ELEMENT(ZeroWindow)
 public:
-    explicit(true) SonixBeautyWindow(QQuickWindow* _parent = nullptr);
-    ~SonixBeautyWindow() noexcept;
+    explicit(true) AndroidWindow(QQuickWindow* _parent = nullptr);
+    ~AndroidWindow() noexcept;
 
-    static auto instance() noexcept -> SonixBeautyWindow*;
+    static auto instance() noexcept -> AndroidWindow*;
 
 private:
     auto connectSignal2Slot() noexcept -> void;
 
-    auto setSonixBeautyWindow() noexcept -> void;
+    auto setAndroidWindow() noexcept -> void;
 
     auto setWindowPropertys() noexcept -> void;
 
@@ -26,5 +26,5 @@ private Q_SLOTS:
     void onActivityVisibileChanged(bool _activityVisibile);
 
 private:
-    inline static SonixBeautyWindow* m_instance{nullptr};
+    inline static AndroidWindow* m_instance{nullptr};
 };
