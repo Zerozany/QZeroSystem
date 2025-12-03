@@ -1,0 +1,12 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 26,
+        "patch": 0
+    },
+    "include": [
+        "presets/CMakePresets-PC.json",
+        "presets/CMakePresets-Android.json"
+    ]
+}
