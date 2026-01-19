@@ -42,7 +42,7 @@ auto AndroidWifModule::init() noexcept -> void
         qDebug() << "Failed to get valid context";
         return;
     }
-    m_wifiObject = new QJniObject{"com/sonixbeauty/module/WifiModule", "(Landroid/app/Activity;)V", context->object<jobject>(), this};
+    m_wifiObject = new QJniObject{"com/zerosystem/module/WifiModule", "(Landroid/app/Activity;)V", context->object<jobject>(), this};
     if (!m_wifiObject->isValid())
     {
         qDebug() << "Cannot create Java helper instance";
