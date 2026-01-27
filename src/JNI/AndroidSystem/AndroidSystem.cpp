@@ -37,7 +37,7 @@ auto AndroidSystem::init() noexcept -> void
 #endif
 }
 
-auto AndroidSystem::setScreenBrightness(float _value) noexcept -> void
+auto AndroidSystem::setScreenBrightness(int _value) noexcept -> void
 {
 #if defined(Q_OS_ANDROID)
     m_settingObject->callMethod<void>("setSystemBrightness", "(I)V", jint(_value));

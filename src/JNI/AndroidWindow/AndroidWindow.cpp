@@ -5,20 +5,6 @@
     #include <QJniEnvironment>
 #endif
 
-#if defined(Q_OS_ANDROID)
-extern "C" {
-
-    JNIEXPORT void JNICALL
-    Java_com_zerosystem_core_MainActivity_QActivityVisibileChanged(JNIEnv*, jclass, jboolean _activityVisibile)
-    {
-        if (auto window{AndroidWindow::instance()}; window)
-        {
-            QMetaObject::invokeMethod(window, "activityVisibileChanged", Qt::QueuedConnection, Q_ARG(bool, static_cast<bool>(_activityVisibile)));
-        }
-    }
-}
-#endif
-
 AndroidWindow::AndroidWindow(QQuickWindow* _parent) : QQuickWindow{_parent}
 {
     std::invoke(&AndroidWindow::setAndroidWindow, this);

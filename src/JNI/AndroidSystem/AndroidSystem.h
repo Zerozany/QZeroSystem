@@ -17,7 +17,7 @@ private:
     auto init() noexcept -> void;
 
 public:
-    auto setScreenBrightness(float _value) noexcept -> void;
+    auto setScreenBrightness(int _value) noexcept -> void;
 
 private:
     QJniObject* m_settingObject{nullptr};
