@@ -43,7 +43,7 @@
     <!-- 支持超大屏设备 -->
 
     <application
-        android:name="com.zerosystem.core.JNIApplication"
+        android:name="org.qtproject.qt.android.bindings.QtApplication"
         android:label="-- %%INSERT_APP_NAME%% --"
         android:icon="-- %%INSERT_APP_ICON%% --"
         android:hardwareAccelerated="true"

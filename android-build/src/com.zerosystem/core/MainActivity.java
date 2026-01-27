@@ -18,6 +18,7 @@ public class MainActivity extends org.qtproject.qt.android.bindings.QtActivity {
     {
         super.onCreate(_savedInstanceState);
         m_systemConfig = new SystemConfig();
+        m_systemConfig.systemColumnHandle(this);
     }
 
     @Override
@@ -26,7 +27,6 @@ public class MainActivity extends org.qtproject.qt.android.bindings.QtActivity {
         super.onWindowFocusChanged(_hasFocus);
         if (_hasFocus) {
             QActivityVisibileChanged(true);
-            m_systemConfig.systemColumnHandle(this);
         } else {
             QActivityVisibileChanged(false);
         }
