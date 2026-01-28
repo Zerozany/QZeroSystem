@@ -3,7 +3,7 @@ _Pragma("once");
 #include <QtQml/qqmlregistration.h>
 
 #if defined(Q_OS_WINDOWS) && defined(_MSC_VER)
-    #ifdef SONIXBEAUTYSYSTEM
+    #ifdef QZeroSystem
         #define SONIXEX_API Q_DECL_EXPORT
     #else
         #define SONIXEX_API Q_DECL_IMPORT
