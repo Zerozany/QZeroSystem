@@ -10,10 +10,6 @@ target_compile_definitions(${PROJECT_NAME}
 
 set(QT_QML_GENERATE_QMLLS_INI OFF)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    QT_QMLCACHEGEN_ARGUMENTS "--verbose"
-)
-
 if(MSVC)
     target_compile_options(${PROJECT_NAME}
         PRIVATE
