@@ -4,7 +4,10 @@ if(ANDROID)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/**/*.cpp"
     )
 
-    file(GLOB INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/*")
+    file(GLOB INCLUDEDIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/*/"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/**/*/"
+    )
 
 elseif(WIN32)
     file(GLOB SRCFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -12,20 +15,29 @@ elseif(WIN32)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/**/*.cpp"
     )
 
-    file(GLOB INCLUDEDIR "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/*")
+    file(GLOB INCLUDEDIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/*/"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/**/*/"
+    )
 endif()
 
 qt_add_qml_module(${PROJECT_NAME}
     URI "${PROJECT_NAME}"
     VERSION 1.0
+    SHARED
     QML_FILES
     SOURCES ${SRCFILES}
 )
 
-foreach(HEADERDIR ${INCLUDEDIR})
-    if(NOT IS_DIRECTORY ${HEADERDIR})
-        continue()
-    endif()
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    Qt6::Core
+    Qt6::Quick
+    Qt6::QuickControls2
+    Qt6::Gui
+)
 
-    target_include_directories(${PROJECT_NAME} PUBLIC ${HEADERDIR})
-endforeach()
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${INCLUDEDIR}
+)
