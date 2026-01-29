@@ -21,20 +21,9 @@ elseif(WIN32)
     )
 endif()
 
-qt_add_qml_module(${PROJECT_NAME}
-    URI "${PROJECT_NAME}"
-    VERSION 1.0
-    SHARED
-    QML_FILES
-    SOURCES ${SRCFILES}
-)
-
-target_link_libraries(${PROJECT_NAME}
+target_sources(${PROJECT_NAME}
     PRIVATE
-    Qt6::Core
-    Qt6::Quick
-    Qt6::QuickControls2
-    Qt6::Gui
+    ${SRCFILES}
 )
 
 target_include_directories(${PROJECT_NAME}
