@@ -24,6 +24,6 @@ auto AndroidContext::context() noexcept -> QJniObject*
 #endif
 }
 
-AndroidContext::AndroidContext(QObject* _parent)
+AndroidContext::AndroidContext(QObject* _parent) : QObject{_parent}
 {
 }

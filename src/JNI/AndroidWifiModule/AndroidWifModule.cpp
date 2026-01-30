@@ -14,6 +14,8 @@
 extern "C" JNIEXPORT void JNICALL
 Java_com_sonixbeauty_module_WifiModule_connectSuccess(JNIEnv* env, jobject thiz, jint state)
 {
+    Q_UNUSED(env);
+    Q_UNUSED(thiz);
     AndroidWifModule* androidWifiConfig{AndroidWifModule::instance()};
     if (androidWifiConfig)
     {
