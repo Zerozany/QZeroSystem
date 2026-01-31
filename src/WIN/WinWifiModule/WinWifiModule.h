@@ -3,15 +3,15 @@ _Pragma("once");
 
 #if defined(Q_OS_WINDOWS) && defined(_MSC_VER)
     #ifdef QZeroSystem
-        #define SONIXEX_API Q_DECL_EXPORT
+        #define QZERO_API Q_DECL_EXPORT
     #else
-        #define SONIXEX_API Q_DECL_IMPORT
+        #define QZERO_API Q_DECL_IMPORT
     #endif
 #else
-    #define SONIXEX_API
+    #define QZERO_API
 #endif
 
-class SONIXEX_API WinWifiModule : public WifiModuleBase
+class QZERO_API WinWifiModule : public WifiModuleBase
 {
     using HANDLE = void*;
     Q_OBJECT
