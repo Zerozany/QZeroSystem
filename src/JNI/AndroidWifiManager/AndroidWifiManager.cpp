@@ -101,15 +101,10 @@ auto AndroidWifManager::getCurrentWifi() noexcept -> QString
     return curConnectedWifiStr;
 }
 
-auto AndroidWifManager::connectWifi(const QString& _ssid, const QString& _password) noexcept -> void
+auto AndroidWifManager::connectToWifi(const QString& _ssid, const QString& _password) noexcept -> void
 {
 #if defined(Q_OS_ANDROID)
-
-    if (!m_wifiObject || !m_wifiObject->isValid())
-    {
-        return;
-    }
-    m_wifiObject->callMethod<void>("connectWifi", "(Ljava/lang/String;Ljava/lang/String;)V",
+    m_wifiObject->callMethod<void>("connectToWifi", "(Ljava/lang/String;Ljava/lang/String;)V",
                                    QJniObject::fromString(_ssid).object<jstring>(),
                                    QJniObject::fromString(_password).object<jstring>());
 #endif

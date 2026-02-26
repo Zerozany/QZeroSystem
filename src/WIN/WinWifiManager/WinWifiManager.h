@@ -36,7 +36,7 @@ public:
 
     [[nodiscard]] auto disconnectWifi() noexcept -> bool;
 
-    [[nodiscard]] auto connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;
+    [[nodiscard]] auto connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;
 
 private:
     HANDLE m_hClient{nullptr};

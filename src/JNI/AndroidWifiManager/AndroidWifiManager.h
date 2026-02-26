@@ -23,7 +23,7 @@ public:
 
     auto getCurrentWifi() noexcept -> QString;
 
-    auto connectWifi(const QString& _ssid, const QString& _password) noexcept -> void;
+    auto connectToWifi(const QString& _ssid, const QString& _password) noexcept -> void;
 
 Q_SIGNALS:
 

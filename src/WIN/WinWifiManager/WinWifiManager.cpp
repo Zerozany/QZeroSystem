@@ -223,7 +223,7 @@ auto WinWifiManager::disconnectWifi() noexcept -> bool
     return true;
 }
 
-auto WinWifiManager::connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
+auto WinWifiManager::connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
 {
     static auto wifiProfileHead{[](const std::string& _ssid, const std::string& _password) -> std::wstring {
         std::string utf8Xml{std::format(
