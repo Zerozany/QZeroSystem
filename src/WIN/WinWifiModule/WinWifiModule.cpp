@@ -8,7 +8,7 @@
     #pragma comment(lib, "wlanapi.lib")
 #endif
 
-WinWifiModule::WinWifiModule(WifiModuleBase* _parent) : WifiModuleBase{_parent}
+WinWifiModule::WinWifiModule(QObject* _parent) : QObject{_parent}
 {
     std::invoke(&WinWifiModule::init, this);
 }
@@ -16,8 +16,7 @@ WinWifiModule::WinWifiModule(WifiModuleBase* _parent) : WifiModuleBase{_parent}
 auto WinWifiModule::init() noexcept -> void
 {
     auto wlanCallback{[](PWLAN_NOTIFICATION_DATA _data, PVOID _context) -> void {
-        WifiModuleBase* self{reinterpret_cast<WifiModuleBase*>(_context)};
-        if (!self || _data->NotificationSource != WLAN_NOTIFICATION_SOURCE_ACM)
+        if (_data->NotificationSource != WLAN_NOTIFICATION_SOURCE_ACM)
         {
             return;
         }
