@@ -25,11 +25,11 @@ private:
     auto init() noexcept -> void;
 
 public:
-    auto searchWifiDevice() noexcept -> QMap<QString, quint8>;
+    auto getWifiList() noexcept -> QMap<QString, quint8>;
 
-    auto curConnectedWifi() noexcept -> QString;
+    auto getCurrentWifi() noexcept -> QString;
 
-    auto connectWifi2Ssid(const QString& _ssid, const QString& _password) noexcept -> void;
+    auto connectWifi(const QString& _ssid, const QString& _password) noexcept -> void;
 
 Q_SIGNALS:
     void wifiStateChanged(WifiState _tag);

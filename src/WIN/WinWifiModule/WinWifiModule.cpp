@@ -8,6 +8,12 @@
     #pragma comment(lib, "wlanapi.lib")
 #endif
 
+auto WinWifiModule::instance(QObject* _parent) noexcept -> WinWifiModule*
+{
+    static WinWifiModule* winWifiModule{new WinWifiModule{_parent}};
+    return winWifiModule;
+}
+
 WinWifiModule::WinWifiModule(QObject* _parent) : QObject{_parent}
 {
     std::invoke(&WinWifiModule::init, this);
@@ -80,7 +86,7 @@ auto WinWifiModule::init() noexcept -> void
     }
 }
 
-auto WinWifiModule::searchWifiDevice() noexcept -> std::map<std::string, std::string>
+auto WinWifiModule::getWifiList() noexcept -> std::map<std::string, std::string>
 {
     PWLAN_INTERFACE_INFO_LIST          pIfList{nullptr};
     std::map<std::string, std::string> deviceMap{};
@@ -128,7 +134,7 @@ auto WinWifiModule::searchWifiDevice() noexcept -> std::map<std::string, std::st
     return deviceMap;
 }
 
-auto WinWifiModule::curConnectedWifi() noexcept -> std::string
+auto WinWifiModule::getCurrentWifi() noexcept -> std::string
 {
     std::string curConnectedStr{};
     do
@@ -220,7 +226,7 @@ auto WinWifiModule::disconnectWifi() noexcept -> bool
     return true;
 }
 
-auto WinWifiModule::connectWifi2Ssid(const std::string& _ssid, const std::string& _password) noexcept -> bool
+auto WinWifiModule::connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
 {
     static auto wifiProfileHead{[](const std::string& _ssid, const std::string& _password) -> std::wstring {
         std::string utf8Xml{std::format(

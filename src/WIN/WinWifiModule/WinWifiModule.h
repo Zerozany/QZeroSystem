@@ -18,20 +18,23 @@ class QZERO_API WinWifiModule : public QObject
     using HANDLE = void*;
     Q_OBJECT
 public:
-    explicit(true) WinWifiModule(QObject* _parent = nullptr);
+    static auto instance(QObject* _parent = nullptr) noexcept -> WinWifiModule*;
+
     ~WinWifiModule() noexcept = default;
 
 private:
+    explicit(true) WinWifiModule(QObject* _parent = nullptr);
+
     auto init() noexcept -> void;
 
 public:
-    auto searchWifiDevice() noexcept -> std::map<std::string, std::string>;
+    auto getWifiList() noexcept -> std::map<std::string, std::string>;
 
-    auto curConnectedWifi() noexcept -> std::string;
+    auto getCurrentWifi() noexcept -> std::string;
 
-    auto disconnectWifi() noexcept -> bool;
+    [[nodiscard]] auto disconnectWifi() noexcept -> bool;
 
-    auto connectWifi2Ssid(const std::string& _ssid, const std::string& _password) noexcept -> bool;
+    auto connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;
 
 private:
     HANDLE m_hClient{nullptr};

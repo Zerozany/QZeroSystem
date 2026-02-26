@@ -53,7 +53,7 @@ auto AndroidWifModule::init() noexcept -> void
 #endif
 }
 
-auto AndroidWifModule::searchWifiDevice() noexcept -> QMap<QString, quint8>
+auto AndroidWifModule::getWifiList() noexcept -> QMap<QString, quint8>
 {
     QMap<QString, quint8> wifiMap{};
 #if defined(Q_OS_ANDROID)
@@ -84,7 +84,7 @@ auto AndroidWifModule::searchWifiDevice() noexcept -> QMap<QString, quint8>
     return wifiMap;
 }
 
-auto AndroidWifModule::curConnectedWifi() noexcept -> QString
+auto AndroidWifModule::getCurrentWifi() noexcept -> QString
 {
     QString curConnectedWifiStr{};
 #if defined(Q_OS_ANDROID)
@@ -109,7 +109,7 @@ auto AndroidWifModule::curConnectedWifi() noexcept -> QString
     return curConnectedWifiStr;
 }
 
-auto AndroidWifModule::connectWifi2Ssid(const QString& _ssid, const QString& _password) noexcept -> void
+auto AndroidWifModule::connectWifi(const QString& _ssid, const QString& _password) noexcept -> void
 {
 #if defined(Q_OS_ANDROID)
 
