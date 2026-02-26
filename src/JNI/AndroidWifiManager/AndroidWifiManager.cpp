@@ -57,22 +57,24 @@ auto AndroidWifManager::getWifiList() noexcept -> QMap<QString, quint8>
 {
     QMap<QString, quint8> wifiMap{};
 #if defined(Q_OS_ANDROID)
-    // 调用 Java 方法，获取 HashMap
-    QJniObject result{m_wifiObject->callObjectMethod("getWifiMap", "()Ljava/util/HashMap;")};
+    QJniObject result{m_wifiObject->callObjectMethod("getWifiList", "()Ljava/lang/String;")};
     if (!result.isValid())
     {
         return wifiMap;
     }
-    QJniObject entrySet{result.callObjectMethod("entrySet", "()Ljava/util/Set;")};
-    QJniObject iterator{entrySet.callObjectMethod("iterator", "()Ljava/util/Iterator;")};
-    while (iterator.callMethod<jboolean>("hasNext"))
+    if (result.toString() == QString{"NULL"})
     {
-        QJniObject entry{iterator.callObjectMethod("next", "()Ljava/lang/Object;")};
-        QJniObject key{entry.callObjectMethod("getKey", "()Ljava/lang/Object;")};
-        QJniObject value{entry.callObjectMethod("getValue", "()Ljava/lang/Object;")};
-        QString    ssid{key.toString()};
-        int        level{value.callMethod<jint>("intValue")};
-        wifiMap.insert(ssid, level);
+        return wifiMap;
+    }
+    QStringList wifiStrList{result.toString().replace("\"", "").split('\n', Qt::SkipEmptyParts)};
+    if (wifiStrList.isEmpty())
+    {
+        return wifiMap;
+    }
+    for (QString& entry : wifiStrList)
+    {
+        QStringList parts{entry.replace(entry.lastIndexOf(' '), 1, ",").split(',')};
+        wifiMap[parts[0].trimmed()] = parts[1].trimmed().toInt();
     }
 #endif
     return wifiMap;
@@ -80,16 +82,23 @@ auto AndroidWifManager::getWifiList() noexcept -> QMap<QString, quint8>
 
 auto AndroidWifManager::getCurrentWifi() noexcept -> QString
 {
+    QString curConnectedWifiStr{};
 #if defined(Q_OS_ANDROID)
-    QJniObject result{m_wifiObject->callObjectMethod("getCurrentWifi", "()Ljava/lang/String;")};
-    if (!result.isValid())
+    do
     {
-        return QString{};
-    }
-    return result.toString();
-#else
-    return QString{};
+        QJniObject result{m_wifiObject->callObjectMethod("getCurrentWifi", "()Ljava/lang/String;")};
+        if (!result.isValid())
+        {
+            break;
+        }
+        if (result.toString() == QString{"NULL"})
+        {
+            break;
+        }
+        curConnectedWifiStr = result.toString();
+    } while (false);
 #endif
+    return curConnectedWifiStr;
 }
 
 auto AndroidWifManager::connectToWifi(const QString& _ssid, const QString& _password) noexcept -> void
