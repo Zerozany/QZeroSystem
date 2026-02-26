@@ -6,14 +6,15 @@ class QJniObject;
 class AndroidContext : public QObject
 {
 public:
+    static auto instance(QObject* _parent = nullptr) noexcept -> AndroidContext*;
+
     ~AndroidContext() noexcept = default;
 
-    static auto instance() noexcept -> AndroidContext*;
-
+public:
     auto context() noexcept -> QJniObject*;
 
 private:
     explicit(true) AndroidContext(QObject* _parent = nullptr);
 
-private:
+    Q_DISABLE_COPY_MOVE(AndroidContext)
 };

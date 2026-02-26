@@ -3,24 +3,18 @@ _Pragma("once");
 
 class QJniObject;
 
-class AndroidWifModule : public QObject
+class AndroidWifManager : public QObject
 {
     Q_OBJECT
 public:
-    enum class WifiState : uint8_t
-    {
-        DISCONNECTED = 0,
-        CONNECTSUCCESS,
-        CONNECTERROR
-    };
+    static auto instance(QObject* _parent = nullptr) noexcept -> AndroidWifManager*;
 
-public:
-    ~AndroidWifModule() noexcept = default;
-
-    static auto instance() noexcept -> AndroidWifModule*;
+    ~AndroidWifManager() noexcept = default;
 
 private:
-    explicit(true) AndroidWifModule(QObject* _parent = nullptr);
+    explicit(true) AndroidWifManager(QObject* _parent = nullptr);
+
+    Q_DISABLE_COPY_MOVE(AndroidWifManager)
 
     auto init() noexcept -> void;
 
@@ -32,7 +26,6 @@ public:
     auto connectWifi(const QString& _ssid, const QString& _password) noexcept -> void;
 
 Q_SIGNALS:
-    void wifiStateChanged(WifiState _tag);
 
 private:
     QJniObject* m_wifiObject{nullptr};

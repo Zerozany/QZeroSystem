@@ -1,4 +1,4 @@
-#include "AndroidWifModule.h"
+#include "AndroidWifiManager.h"
 #include <QDebug>
 #include <QCoreApplication>
 #include <QStringList>
@@ -11,31 +11,31 @@
 
 #if defined(Q_OS_ANDROID)
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_sonixbeauty_module_WifiModule_connectSuccess(JNIEnv* env, jobject thiz, jint state)
-{
-    Q_UNUSED(env);
-    Q_UNUSED(thiz);
-    AndroidWifModule* androidWifiConfig{AndroidWifModule::instance()};
-    if (androidWifiConfig)
-    {
-        Q_EMIT androidWifiConfig->wifiStateChanged(static_cast<AndroidWifModule::WifiState>(state));
-    }
-}
+// extern "C" JNIEXPORT void JNICALL
+// Java_com_sonixbeauty_module_WifiModule_connectSuccess(JNIEnv* env, jobject thiz, jint state)
+// {
+//     Q_UNUSED(env);
+//     Q_UNUSED(thiz);
+//     AndroidWifManager* androidWifiConfig{AndroidWifManager::instance()};
+//     if (androidWifiConfig)
+//     {
+//         Q_EMIT androidWifiConfig->wifiStateChanged(static_cast<AndroidWifManager::WifiState>(state));
+//     }
+// }
 #endif
 
-auto AndroidWifModule::instance() noexcept -> AndroidWifModule*
+auto AndroidWifManager::instance(QObject* _parent) noexcept -> AndroidWifManager*
 {
-    static AndroidWifModule androidWifiConfig{};
-    return &androidWifiConfig;
+    static AndroidWifManager* androidWifiConfig{new AndroidWifManager{_parent}};
+    return androidWifiConfig;
 }
 
-AndroidWifModule::AndroidWifModule(QObject* _parent) : QObject{_parent}
+AndroidWifManager::AndroidWifManager(QObject* _parent) : QObject{_parent}
 {
-    std::invoke(&AndroidWifModule::init, this);
+    std::invoke(&AndroidWifManager::init, this);
 }
 
-auto AndroidWifModule::init() noexcept -> void
+auto AndroidWifManager::init() noexcept -> void
 {
 #if defined(Q_OS_ANDROID)
     QJniObject* context{AndroidContext::instance()->context()};
@@ -53,15 +53,11 @@ auto AndroidWifModule::init() noexcept -> void
 #endif
 }
 
-auto AndroidWifModule::getWifiList() noexcept -> QMap<QString, quint8>
+auto AndroidWifManager::getWifiList() noexcept -> QMap<QString, quint8>
 {
     QMap<QString, quint8> wifiMap{};
 #if defined(Q_OS_ANDROID)
-    if (!m_wifiObject || !m_wifiObject->isValid())
-    {
-        return wifiMap;
-    }
-    QJniObject result{m_wifiObject->callObjectMethod("scanWifiList", "()Ljava/lang/String;")};
+    QJniObject result{m_wifiObject->callObjectMethod("getWifiList", "()Ljava/lang/String;")};
     if (!result.isValid())
     {
         return wifiMap;
@@ -84,32 +80,28 @@ auto AndroidWifModule::getWifiList() noexcept -> QMap<QString, quint8>
     return wifiMap;
 }
 
-auto AndroidWifModule::getCurrentWifi() noexcept -> QString
+auto AndroidWifManager::getCurrentWifi() noexcept -> QString
 {
     QString curConnectedWifiStr{};
 #if defined(Q_OS_ANDROID)
     do
     {
-        if (!m_wifiObject || !m_wifiObject->isValid())
-        {
-            break;
-        }
-        QJniObject result{m_wifiObject->callObjectMethod("getCurrentWifiSSID", "()Ljava/lang/String;")};
+        QJniObject result{m_wifiObject->callObjectMethod("getCurrentWifi", "()Ljava/lang/String;")};
         if (!result.isValid())
         {
-            curConnectedWifiStr = result.toString();
             break;
         }
         if (result.toString() == QString{"NULL"})
         {
             break;
         }
+        curConnectedWifiStr = result.toString();
     } while (false);
 #endif
     return curConnectedWifiStr;
 }
 
-auto AndroidWifModule::connectWifi(const QString& _ssid, const QString& _password) noexcept -> void
+auto AndroidWifManager::connectWifi(const QString& _ssid, const QString& _password) noexcept -> void
 {
 #if defined(Q_OS_ANDROID)
 

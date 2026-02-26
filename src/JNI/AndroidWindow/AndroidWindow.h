@@ -8,6 +8,7 @@ class AndroidWindow : public QQuickWindow
     QML_NAMED_ELEMENT(ZeroWindow)
 public:
     explicit(true) AndroidWindow(QQuickWindow* _parent = nullptr);
+
     ~AndroidWindow() noexcept;
 
     static auto instance() noexcept -> AndroidWindow*;
