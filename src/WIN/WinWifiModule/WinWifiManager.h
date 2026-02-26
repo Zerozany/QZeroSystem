@@ -13,17 +13,19 @@ _Pragma("once");
     #define QZERO_API
 #endif
 
-class QZERO_API WinWifiModule : public QObject
+class QZERO_API WinWifiManager : public QObject
 {
     using HANDLE = void*;
     Q_OBJECT
 public:
-    static auto instance(QObject* _parent = nullptr) noexcept -> WinWifiModule*;
+    static auto instance(QObject* _parent = nullptr) noexcept -> WinWifiManager*;
 
-    ~WinWifiModule() noexcept = default;
+    ~WinWifiManager() noexcept = default;
 
 private:
-    explicit(true) WinWifiModule(QObject* _parent = nullptr);
+    explicit(true) WinWifiManager(QObject* _parent = nullptr);
+
+    Q_DISABLE_COPY_MOVE(WinWifiManager)
 
     auto init() noexcept -> void;
 
@@ -34,7 +36,7 @@ public:
 
     [[nodiscard]] auto disconnectWifi() noexcept -> bool;
 
-    auto connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;
+    [[nodiscard]] auto connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;
 
 private:
     HANDLE m_hClient{nullptr};

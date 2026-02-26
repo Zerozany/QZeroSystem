@@ -1,4 +1,4 @@
-#include "WinWifiModule.h"
+#include "WinWifiManager.h"
 #include <print>
 #include <span>
 
@@ -8,18 +8,18 @@
     #pragma comment(lib, "wlanapi.lib")
 #endif
 
-auto WinWifiModule::instance(QObject* _parent) noexcept -> WinWifiModule*
+auto WinWifiManager::instance(QObject* _parent) noexcept -> WinWifiManager*
 {
-    static WinWifiModule* winWifiModule{new WinWifiModule{_parent}};
+    static WinWifiManager* winWifiModule{new WinWifiManager{_parent}};
     return winWifiModule;
 }
 
-WinWifiModule::WinWifiModule(QObject* _parent) : QObject{_parent}
+WinWifiManager::WinWifiManager(QObject* _parent) : QObject{_parent}
 {
-    std::invoke(&WinWifiModule::init, this);
+    std::invoke(&WinWifiManager::init, this);
 }
 
-auto WinWifiModule::init() noexcept -> void
+auto WinWifiManager::init() noexcept -> void
 {
     auto wlanCallback{[](PWLAN_NOTIFICATION_DATA _data, PVOID _context) -> void {
         if (_data->NotificationSource != WLAN_NOTIFICATION_SOURCE_ACM)
@@ -75,7 +75,7 @@ auto WinWifiModule::init() noexcept -> void
     // 打开WLAN句柄
     if (DWORD dwResult{WlanOpenHandle(2, nullptr, &version, &m_hClient)}; dwResult != ERROR_SUCCESS)
     {
-        std::println("WlanOpenHandle failed, error code: {}", dwResult);
+        std::println("WlanOpenHandle failed: {}", dwResult);
         return;
     }
     if (DWORD dwResult{WlanRegisterNotification(m_hClient, WLAN_NOTIFICATION_SOURCE_ACM, TRUE, wlanCallback, this, nullptr, nullptr)};
@@ -86,13 +86,14 @@ auto WinWifiModule::init() noexcept -> void
     }
 }
 
-auto WinWifiModule::getWifiList() noexcept -> std::map<std::string, std::string>
+auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string>
 {
     PWLAN_INTERFACE_INFO_LIST          pIfList{nullptr};
-    std::map<std::string, std::string> deviceMap{};
+    std::map<std::string, std::string> wifiList{};
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
     {
-        return deviceMap;
+        std::println("WlanEnumInterfaces failed: {}", dwResult);
+        return wifiList;
     }
     // 遍历所有 WLAN 接口
     for (auto& iface : std::span{pIfList->InterfaceInfo, pIfList->dwNumberOfItems})
@@ -117,33 +118,32 @@ auto WinWifiModule::getWifiList() noexcept -> std::map<std::string, std::string>
             }
             std::string ssid(reinterpret_cast<const char*>(netWork.dot11Ssid.ucSSID), netWork.dot11Ssid.uSSIDLength);
             std::string signalQualityObj{std::to_string(netWork.wlanSignalQuality)};
-            deviceMap.emplace(ssid, signalQualityObj);
+            wifiList.emplace(ssid, signalQualityObj);
         }
         WlanFreeMemory(pBssList);
     }
     WlanFreeMemory(pIfList);
 #if true
-    if (!deviceMap.empty())
+    if (!wifiList.empty())
     {
-        for (const auto& [k, v] : deviceMap)
+        for (const auto& [k, v] : wifiList)
         {
             std::println("SSID: {}, signalQuality: {}", k, v);
         }
     }
 #endif
-    return deviceMap;
+    return wifiList;
 }
 
-auto WinWifiModule::getCurrentWifi() noexcept -> std::string
+auto WinWifiManager::getCurrentWifi() noexcept -> std::string
 {
-    std::string curConnectedStr{};
+    std::string currentWifiStr{};
     do
     {
         PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
         if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
         {
             std::println("WlanEnumInterfaces failed with error: {}", dwResult);
-            curConnectedStr = std::string{};
             break;
         }
         PWLAN_CONNECTION_ATTRIBUTES pConnectInfo{nullptr};
@@ -152,7 +152,6 @@ auto WinWifiModule::getCurrentWifi() noexcept -> std::string
         PWLAN_INTERFACE_INFO        pIfInfo{static_cast<WLAN_INTERFACE_INFO*>(&pIfList->InterfaceInfo[0])};
         if (pIfInfo->isState != wlan_interface_state_connected)
         {
-            curConnectedStr = std::string{};
             WlanFreeMemory(pIfList);
             break;
         }
@@ -161,24 +160,22 @@ auto WinWifiModule::getCurrentWifi() noexcept -> std::string
         if (dwResult != ERROR_SUCCESS)
         {
             std::println("WlanQueryInterface failed with error: {}", dwResult);
-            curConnectedStr = std::string{};
             WlanFreeMemory(pIfList);
             break;
         }
         if (pConnectInfo->isState != wlan_interface_state_connected)
         {
-            curConnectedStr = std::string{};
             WlanFreeMemory(pIfList);
             break;
         }
-        curConnectedStr.resize(std::wcstombs(nullptr, pConnectInfo->strProfileName, 0));
-        std::wcstombs(curConnectedStr.data(), pConnectInfo->strProfileName, curConnectedStr.size());
+        currentWifiStr.resize(std::wcstombs(nullptr, pConnectInfo->strProfileName, 0));
+        std::wcstombs(currentWifiStr.data(), pConnectInfo->strProfileName, currentWifiStr.size());
         WlanFreeMemory(pIfList);
     } while (false);
-    return curConnectedStr;
+    return currentWifiStr;
 }
 
-auto WinWifiModule::disconnectWifi() noexcept -> bool
+auto WinWifiManager::disconnectWifi() noexcept -> bool
 {
     PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
@@ -226,7 +223,7 @@ auto WinWifiModule::disconnectWifi() noexcept -> bool
     return true;
 }
 
-auto WinWifiModule::connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
+auto WinWifiManager::connectWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
 {
     static auto wifiProfileHead{[](const std::string& _ssid, const std::string& _password) -> std::wstring {
         std::string utf8Xml{std::format(
@@ -263,7 +260,7 @@ auto WinWifiModule::connectWifi(const std::string& _ssid, const std::string& _pa
     PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
     {
-        std::println("WlanEnumInterfaces failed with error: {}", dwResult);
+        std::println("WlanEnumInterfaces failed: {}", dwResult);
         return false;
     }
     PWLAN_INTERFACE_INFO pIfInfo{static_cast<WLAN_INTERFACE_INFO*>(&pIfList->InterfaceInfo[0])};
@@ -271,7 +268,7 @@ auto WinWifiModule::connectWifi(const std::string& _ssid, const std::string& _pa
     WLAN_REASON_CODE     wlanReason{};
     if (DWORD dwResult{WlanSetProfile(m_hClient, &pIfInfo->InterfaceGuid, 0, wStr.c_str(), nullptr, TRUE, nullptr, &wlanReason)}; dwResult != ERROR_SUCCESS)
     {
-        std::println("WlanSetProfile failed with error: {}", dwResult);
+        std::println("WlanSetProfile failed: {}", dwResult);
         WlanFreeMemory(pIfList);
         return false;
     }
