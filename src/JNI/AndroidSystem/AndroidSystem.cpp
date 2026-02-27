@@ -25,10 +25,10 @@ auto AndroidSystem::init() noexcept -> void
     QJniObject* context{AndroidContext::instance()->context()};
     if (!context || !context->isValid())
     {
-        qDebug() << "Failed to get valid context";
+        qDebug() << "Cannot create Java SystemControl instance";
         return;
     }
-    m_settingObject = new QJniObject{"com/zerosystem/system/SystemControl", "(Landroid/app/Activity;)V", context->object<jobject>(), this};
+    m_settingObject = new QJniObject{"com/sonixbeauty/system/SystemControl", "(Landroid/app/Activity;)V", context->object<jobject>(), this};
     if (!m_settingObject->isValid())
     {
         qDebug() << "Cannot create Java helper instance";

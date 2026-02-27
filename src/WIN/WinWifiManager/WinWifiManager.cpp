@@ -135,7 +135,7 @@ auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string
     return wifiList;
 }
 
-auto WinWifiManager::getCurrentWifi() noexcept -> std::string
+auto WinWifiManager::currentWifiName() noexcept -> std::string
 {
     std::string currentWifiStr{};
     do

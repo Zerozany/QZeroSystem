@@ -1,32 +1,35 @@
 _Pragma("once");
 #include <QObject>
 
-class QJniObject;
+#if defined(Q_OS_ANDROID)
+    #include <QJniObject>
+#endif
 
-class AndroidWifManager : public QObject
+class AndroidWifiManager : public QObject
 {
     Q_OBJECT
 public:
-    static auto instance(QObject* _parent = nullptr) noexcept -> AndroidWifManager*;
+    explicit(true) AndroidWifiManager(const QString& _activityPath, QObject* _parent = nullptr);
 
-    ~AndroidWifManager() noexcept = default;
+    ~AndroidWifiManager() noexcept = default;
+
+    Q_DISABLE_COPY_MOVE(AndroidWifiManager)
 
 private:
-    explicit(true) AndroidWifManager(QObject* _parent = nullptr);
-
-    Q_DISABLE_COPY_MOVE(AndroidWifManager)
-
     auto init() noexcept -> void;
 
 public:
-    auto getWifiList() noexcept -> QMap<QString, quint8>;
+    virtual auto getWifiList(const char* _jniApiName) noexcept -> QMap<QString, quint8>;
 
-    auto getCurrentWifi() noexcept -> QString;
+    virtual auto currentWifiName(const char* _jniApiName) noexcept -> QString;
 
-    auto connectToWifi(const QString& _ssid, const QString& _password) noexcept -> void;
+    virtual auto connectToWifi(const char* _jniApiName, const QString& _ssid, const QString& _password) noexcept -> void;
 
 Q_SIGNALS:
 
 private:
-    QJniObject* m_wifiObject{nullptr};
+#if defined(Q_OS_ANDROID)
+    QJniObject m_wifiObject{};
+#endif
+    QString m_activityPath{};
 };

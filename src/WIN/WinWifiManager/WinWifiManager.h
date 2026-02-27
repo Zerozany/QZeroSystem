@@ -32,7 +32,7 @@ private:
 public:
     auto getWifiList() noexcept -> std::map<std::string, std::string>;
 
-    auto getCurrentWifi() noexcept -> std::string;
+    auto currentWifiName() noexcept -> std::string;
 
     [[nodiscard]] auto disconnectWifi() noexcept -> bool;
 
