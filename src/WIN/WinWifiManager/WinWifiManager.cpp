@@ -123,7 +123,7 @@ auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string
         WlanFreeMemory(pBssList);
     }
     WlanFreeMemory(pIfList);
-#if true
+#if false
     if (!wifiList.empty())
     {
         for (const auto& [k, v] : wifiList)
