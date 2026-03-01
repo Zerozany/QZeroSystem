@@ -1,18 +1,13 @@
 #include "WinWifiManager.h"
 #include <print>
 #include <span>
+#include <QDebug>
 
 #if defined(_WIN32)
     #include <windows.h>
     #include <wlanapi.h>
     #pragma comment(lib, "wlanapi.lib")
 #endif
-
-auto WinWifiManager::instance(QObject* _parent) noexcept -> WinWifiManager*
-{
-    static WinWifiManager* winWifiModule{new WinWifiManager{_parent}};
-    return winWifiModule;
-}
 
 WinWifiManager::WinWifiManager(QObject* _parent) : QObject{_parent}
 {
@@ -40,25 +35,9 @@ auto WinWifiManager::init() noexcept -> void
             {
                 break;
             }
-            case wlan_notification_acm_interface_arrival:  // WLAN 接口插入（热插拔）
-            {
-                break;
-            }
-            case wlan_notification_acm_interface_removal:  // WLAN 接口移除（热拔插）
-            {
-                break;
-            }
-            case wlan_notification_acm_connection_start:  // 开始尝试连接某个 Wi-Fi
-            {
-                [[fallthrough]];
-            }
             case wlan_notification_acm_connection_attempt_fail:  // 连接尝试失败，例如密码错误、信号太弱、认证失败
             {
-                [[fallthrough]];
-            }
-            case wlan_notification_acm_disconnecting:  // 正在断开 Wi-Fi（还没彻底断开）
-            {
-                [[fallthrough]];
+                break;
             }
             case wlan_notification_acm_disconnected:  // 已经断开 Wi-Fi
             {
@@ -116,7 +95,7 @@ auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string
             {
                 continue;
             }
-            std::string ssid(reinterpret_cast<const char*>(netWork.dot11Ssid.ucSSID), netWork.dot11Ssid.uSSIDLength);
+            std::string ssid{reinterpret_cast<const char*>(netWork.dot11Ssid.ucSSID), netWork.dot11Ssid.uSSIDLength};
             std::string signalQualityObj{std::to_string(netWork.wlanSignalQuality)};
             wifiList.emplace(ssid, signalQualityObj);
         }
@@ -168,8 +147,8 @@ auto WinWifiManager::currentWifiName() noexcept -> std::string
             WlanFreeMemory(pIfList);
             break;
         }
-        currentWifiStr.resize(std::wcstombs(nullptr, pConnectInfo->strProfileName, 0));
-        std::wcstombs(currentWifiStr.data(), pConnectInfo->strProfileName, currentWifiStr.size());
+        currentWifiStr = std::string{reinterpret_cast<const char*>(pConnectInfo->wlanAssociationAttributes.dot11Ssid.ucSSID),
+                                     pConnectInfo->wlanAssociationAttributes.dot11Ssid.uSSIDLength};
         WlanFreeMemory(pIfList);
     } while (false);
     return currentWifiStr;
