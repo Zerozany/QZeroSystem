@@ -57,7 +57,7 @@ auto WinWifiManager::init() noexcept -> void
         std::println("WlanOpenHandle failed: {}", dwResult);
         return;
     }
-    if (DWORD dwResult{WlanRegisterNotification(m_hClient, WLAN_NOTIFICATION_SOURCE_ACM, TRUE, wlanCallback, this, nullptr, nullptr)};
+    if (DWORD dwResult{WlanRegisterNotification(m_hClient, WLAN_NOTIFICATION_SOURCE_ALL, TRUE, wlanCallback, this, nullptr, nullptr)};
         dwResult != ERROR_SUCCESS)
     {
         std::println("WlanRegisterNotification failed: {}", dwResult);
