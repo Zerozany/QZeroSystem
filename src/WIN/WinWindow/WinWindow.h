@@ -22,11 +22,10 @@ public:
     explicit(true) WinWindow(QQuickWindow* _parent = nullptr);
     ~WinWindow() noexcept = default;
 
-    static auto instance() noexcept -> WinWindow*;
+public:
+    virtual auto connectSignal2Slot() noexcept -> void = 0;
 
 private:
-    auto connectSignal2Slot() noexcept -> void;
-
     auto setWindowPropertys() noexcept -> void;
 
 Q_SIGNALS:
