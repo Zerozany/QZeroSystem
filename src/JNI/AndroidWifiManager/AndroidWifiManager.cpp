@@ -1,12 +1,12 @@
 #include "AndroidWifiManager.h"
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
 
 #if defined(Q_OS_ANDROID)
     #include <QJniEnvironment>
-    #include <QJsonDocument>
-    #include <QJsonArray>
-    #include <QJsonObject>
-    #include <QJsonValue>
     #include "AndroidContext.h"
 #endif
 

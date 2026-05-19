@@ -19,10 +19,10 @@ auto AndroidContext::context() noexcept -> QJniObject*
 {
 #if defined(Q_OS_ANDROID)
     static QJniObject jniContext{QNativeInterface::QAndroidApplication::context()};
-    if (!jniContext.isValid())
+    if (jniContext.isValid())
     {
-        return nullptr;
+        return &jniContext;
     }
-    return &jniContext;
 #endif
+    return nullptr;
 }

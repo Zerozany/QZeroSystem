@@ -78,8 +78,7 @@ auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string
     for (auto& iface : std::span{pIfList->InterfaceInfo, pIfList->dwNumberOfItems})
     {
         // 先触发扫描
-        if (DWORD dwScan{WlanScan(m_hClient, &iface.InterfaceGuid, nullptr, nullptr, nullptr)};
-            dwScan != ERROR_SUCCESS)
+        if (DWORD dwScan{WlanScan(m_hClient, &iface.InterfaceGuid, nullptr, nullptr, nullptr)}; dwScan != ERROR_SUCCESS)
         {
             continue;
         }
