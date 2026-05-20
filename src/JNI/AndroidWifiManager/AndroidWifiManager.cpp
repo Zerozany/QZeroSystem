@@ -4,6 +4,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QCoreApplication>
 
 #if defined(Q_OS_ANDROID)
     #include <QJniEnvironment>
@@ -18,7 +19,7 @@ AndroidWifiManager::AndroidWifiManager(const QString& _activityPath, QObject* _p
 auto AndroidWifiManager::init() noexcept -> void
 {
 #if defined(Q_OS_ANDROID)
-    m_wifiObject = QJniObject{m_activityPath.toUtf8().constData(), "(Landroid/app/Activity;)V", AndroidContext::instance()->context()->object<jobject>()};
+    m_wifiObject = QJniObject{m_activityPath.toUtf8().constData(), "(Landroid/app/Activity;)V", QNativeInterface::QAndroidApplication::context().object<jobject>()};
     if (!m_wifiObject.isValid())
     {
         qDebug() << "Cannot create Java AndroidWifiManager instance";
