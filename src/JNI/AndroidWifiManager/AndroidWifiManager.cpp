@@ -8,7 +8,6 @@
 
 #if defined(Q_OS_ANDROID)
     #include <QJniEnvironment>
-    #include "AndroidContext.h"
 #endif
 
 AndroidWifiManager::AndroidWifiManager(const QString& _activityPath, QObject* _parent) : QObject{_parent}, m_activityPath{_activityPath}
