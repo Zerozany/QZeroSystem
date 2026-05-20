@@ -1,5 +1,4 @@
 #include "AndroidJNIManager.h"
-#include "AndroidContext.h"
 #include <QCoreApplication>
 
 QString AndroidJNIManager::activityName() const
