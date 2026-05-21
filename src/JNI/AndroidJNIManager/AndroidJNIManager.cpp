@@ -1,19 +1,19 @@
 #include "AndroidJNIManager.h"
 #include <QCoreApplication>
 
-QString AndroidJNIManager::activityName() const
+QString AndroidJNIManager::activityUrl() const
 {
-    return m_activityName;
+    return m_activityUrl;
 }
 
-void AndroidJNIManager::setActivityName(const QString& _activityName)
+void AndroidJNIManager::setActivityUrl(const QString& _activityUrl)
 {
-    if (m_activityName == _activityName)
+    if (m_activityUrl == _activityUrl)
     {
         return;
     }
-    m_activityName = _activityName;
-    Q_EMIT this->activityNameChanged();
+    m_activityUrl = _activityUrl;
+    Q_EMIT this->activityUrlChanged();
 }
 
 AndroidJNIManager::AndroidJNIManager(QObject* _parent) : QObject{_parent}
@@ -23,13 +23,13 @@ AndroidJNIManager::AndroidJNIManager(QObject* _parent) : QObject{_parent}
 
 auto AndroidJNIManager::connectSignal2Slot() noexcept -> void
 {
-    connect(this, &AndroidJNIManager::activityNameChanged, this, &AndroidJNIManager::onActivityNameChanged);
+    connect(this, &AndroidJNIManager::activityUrlChanged, this, &AndroidJNIManager::onActivityUrlChanged);
 }
 
-void AndroidJNIManager::onActivityNameChanged()
+void AndroidJNIManager::onActivityUrlChanged()
 {
 #if defined(Q_OS_ANDROID)
-    m_callObject = QJniObject{m_activityName.toUtf8().constData(), "(Landroid/app/Activity;)V", QNativeInterface::QAndroidApplication::context().object<jobject>()};
+    m_callObject = QJniObject{m_activityUrl.toUtf8().constData(), "(Landroid/app/Activity;)V", QNativeInterface::QAndroidApplication::context().object<jobject>()};
 #endif
 }
 

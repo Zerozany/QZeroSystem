@@ -9,7 +9,7 @@ _Pragma("once");
 class AndroidJNIManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString activityName READ activityName WRITE setActivityName NOTIFY activityNameChanged)
+    Q_PROPERTY(QString activityUrl READ activityUrl WRITE setActivityUrl NOTIFY activityUrlChanged)
 public:
     static auto instance(QObject* _parent = nullptr) -> AndroidJNIManager*;
 
@@ -18,12 +18,12 @@ public:
     Q_DISABLE_COPY_MOVE(AndroidJNIManager)
 
 public:
-    QString activityName() const;
-    void    setActivityName(const QString& _activityName);
+    QString activityUrl() const;
+    void    setActivityUrl(const QString& _activityUrl);
 
 public:
     template <typename ReturnType = void, typename... Args>
-    auto callJNIMethod(const QString& _jniMethod, const QString& _jniType, Args... _args) noexcept -> ReturnType;
+    auto callJNIMethod(const char* _jniMethod, const char* _jniType, Args... _args) noexcept -> ReturnType;
 
 private:
     explicit(true) AndroidJNIManager(QObject* _parent = nullptr);
@@ -31,31 +31,30 @@ private:
     auto connectSignal2Slot() noexcept -> void;
 
 Q_SIGNALS:
-    void activityNameChanged();
+    void activityUrlChanged();
 
 private Q_SLOTS:
-    void onActivityNameChanged();
+    void onActivityUrlChanged();
 
 private:
 #if defined(Q_OS_ANDROID)
     QJniObject m_callObject{};
 #endif
-    QString m_activityName{};
+    QString m_activityUrl{};
 };
 
 template <typename ReturnType, typename... Args>
-inline auto AndroidJNIManager::callJNIMethod(const QString& _jniMethod, const QString& _jniType, Args... _args) noexcept -> ReturnType
+inline auto AndroidJNIManager::callJNIMethod(const char* _jniMethod, const char* _jniType, Args... _args) noexcept -> ReturnType
 {
 #if defined(Q_OS_ANDROID)
 
     if constexpr (std::is_void_v<ReturnType>)
     {
-        m_callObject.callMethod<ReturnType>(_jniMethod.toUtf8().constData(), _jniType.toUtf8().constData(), _args...);
+        m_callObject.callMethod<ReturnType>(_jniMethod, _jniType, _args...);
     }
     else
     {
-        ReturnType value{m_callObject.callMethod<ReturnType>(_jniMethod.toUtf8().constData(), _jniType.toUtf8().constData(), _args...)};
-        return value;
+        return ReturnType{m_callObject.callMethod<ReturnType>(_jniMethod, _jniType, _args...)};
     }
 
 #endif
