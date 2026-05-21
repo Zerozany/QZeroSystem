@@ -1,12 +1,24 @@
 _Pragma("once");
 #include <QObject>
 
+#if defined(Q_OS_WINDOWS) && defined(_MSC_VER)
+    #ifdef QZeroSystem
+        #define QZERO_API Q_DECL_EXPORT
+    #else
+        #define QZERO_API Q_DECL_IMPORT
+    #endif
+#elif defined(__GNUC__) || defined(__clang__)
+    #define QZERO_API __attribute__((visibility("default")))
+#else
+    #define QZERO_API
+#endif
+
 #if defined(Q_OS_ANDROID)
     #include <QJniObject>
     #include <QJniEnvironment>
 #endif
 
-class AndroidJNIManager : public QObject
+class QZERO_API AndroidJNIManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString activityUrl READ activityUrl WRITE setActivityUrl NOTIFY activityUrlChanged)
