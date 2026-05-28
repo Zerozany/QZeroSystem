@@ -9,6 +9,12 @@
     #pragma comment(lib, "wlanapi.lib")
 #endif
 
+auto WinWifiManager::instance(QObject* _parent) -> WinWifiManager*
+{
+    static WinWifiManager* winWifiManager{new WinWifiManager{_parent}};
+    return winWifiManager;
+}
+
 WinWifiManager::WinWifiManager(QObject* _parent) : QObject{_parent}
 {
     std::invoke(&WinWifiManager::init, this);
@@ -65,10 +71,10 @@ auto WinWifiManager::init() noexcept -> void
     }
 }
 
-auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string>
+auto WinWifiManager::getWifiList() noexcept -> QMap<QString, quint8>
 {
-    PWLAN_INTERFACE_INFO_LIST          pIfList{nullptr};
-    std::map<std::string, std::string> wifiList{};
+    PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
+    QMap<QString, quint8>     wifiList{};
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
     {
         std::println("WlanEnumInterfaces failed: {}", dwResult);
@@ -94,9 +100,9 @@ auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string
             {
                 continue;
             }
-            std::string ssid{reinterpret_cast<const char*>(netWork.dot11Ssid.ucSSID), netWork.dot11Ssid.uSSIDLength};
-            std::string signalQualityObj{std::to_string(netWork.wlanSignalQuality)};
-            wifiList.emplace(ssid, signalQualityObj);
+            QString ssid{QString::fromStdString(std::string{reinterpret_cast<const char*>(netWork.dot11Ssid.ucSSID), netWork.dot11Ssid.uSSIDLength})};
+            quint8  signalQualityObj{static_cast<quint8>(QString::fromStdString(std::to_string(netWork.wlanSignalQuality)).toUInt())};
+            wifiList.insert(ssid, signalQualityObj);
         }
         WlanFreeMemory(pBssList);
     }
@@ -113,9 +119,9 @@ auto WinWifiManager::getWifiList() noexcept -> std::map<std::string, std::string
     return wifiList;
 }
 
-auto WinWifiManager::currentWifiName() noexcept -> std::string
+auto WinWifiManager::currentWifiName() noexcept -> QString
 {
-    std::string currentWifiStr{};
+    QString currentWifiStr{};
     do
     {
         PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
@@ -146,8 +152,7 @@ auto WinWifiManager::currentWifiName() noexcept -> std::string
             WlanFreeMemory(pIfList);
             break;
         }
-        currentWifiStr = std::string{reinterpret_cast<const char*>(pConnectInfo->wlanAssociationAttributes.dot11Ssid.ucSSID),
-                                     pConnectInfo->wlanAssociationAttributes.dot11Ssid.uSSIDLength};
+        currentWifiStr = QString::fromStdString(std::string{reinterpret_cast<const char*>(pConnectInfo->wlanAssociationAttributes.dot11Ssid.ucSSID), pConnectInfo->wlanAssociationAttributes.dot11Ssid.uSSIDLength});
         WlanFreeMemory(pIfList);
     } while (false);
     return currentWifiStr;

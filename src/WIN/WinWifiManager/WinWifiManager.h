@@ -18,19 +18,22 @@ class QZERO_API WinWifiManager : public QObject
     using HANDLE = void*;
     Q_OBJECT
 public:
-    explicit(true) WinWifiManager(QObject* _parent = nullptr);
+    static auto instance(QObject* _parent = nullptr) -> WinWifiManager*;
 
     ~WinWifiManager() noexcept = default;
 
     Q_DISABLE_COPY_MOVE(WinWifiManager)
 
+protected:
+    explicit(true) WinWifiManager(QObject* _parent = nullptr);
+
 private:
     auto init() noexcept -> void;
 
 public:
-    auto getWifiList() noexcept -> std::map<std::string, std::string>;
+    auto getWifiList() noexcept -> QMap<QString, quint8>;
 
-    auto currentWifiName() noexcept -> std::string;
+    auto currentWifiName() noexcept -> QString;
 
     [[nodiscard]] auto disconnectWifi() noexcept -> bool;
 
