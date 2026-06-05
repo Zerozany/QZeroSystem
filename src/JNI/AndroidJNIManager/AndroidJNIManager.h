@@ -59,7 +59,6 @@ template <typename ReturnType, typename... Args>
 inline auto AndroidJNIManager::callJNIMethod(const char* _jniMethod, const char* _jniType, Args... _args) noexcept -> ReturnType
 {
 #if defined(Q_OS_ANDROID)
-
     if constexpr (std::is_void_v<ReturnType>)
     {
         m_callObject.callMethod<ReturnType>(_jniMethod, _jniType, _args...);
@@ -68,10 +67,5 @@ inline auto AndroidJNIManager::callJNIMethod(const char* _jniMethod, const char*
     {
         return ReturnType{m_callObject.callMethod<ReturnType>(_jniMethod, _jniType, _args...)};
     }
-
 #endif
-    if constexpr (!std::is_void_v<ReturnType>)
-    {
-        return ReturnType{};
-    }
 }
