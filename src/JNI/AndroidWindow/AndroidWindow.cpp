@@ -51,8 +51,8 @@ auto AndroidWindow::setWindowPropertys() noexcept -> void
 #if defined(Q_OS_ANDROID)
     this->setGraphicsApi(QSGRendererInterface::OpenGL);
     this->setFlags(Qt::Window | Qt::ExpandedClientAreaHint);
-    this->setVisibility(QWindow::FullScreen);
 #endif
+    this->setVisibility(QWindow::AutomaticVisibility);
 }
 
 auto AndroidWindow::connectSignal2Slot() noexcept -> void
