@@ -21,12 +21,24 @@ elseif(WIN32)
     )
 endif()
 
+file(GLOB COMMSRCFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/**/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/**/*.cpp"
+)
+
+file(GLOB COMMINCLUDEDIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*/"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/**/*/"
+)
+
 target_sources(${PROJECT_NAME}
     PRIVATE
     ${SRCFILES}
+    ${COMMSRCFILES}
 )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${INCLUDEDIR}
+    ${COMMINCLUDEDIR}
 )
