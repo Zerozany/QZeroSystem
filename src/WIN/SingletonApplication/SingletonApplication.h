@@ -31,6 +31,6 @@ protected:
     explicit(true) SingletonApplication(const QString& _processID, QObject* _parent = nullptr);
 
 private:
-    QSharedMemory m_shareMemory{};
+    QSharedMemory m_sharedMemory{};
     QString       m_processID{};
 };

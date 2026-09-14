@@ -13,8 +13,8 @@ auto SingletonApplication::instance(const QString& _processID, QObject* _parent)
 auto SingletonApplication::init() noexcept -> void
 {
 #if defined(Q_OS_WINDOWS)
-    m_shareMemory.setKey(m_processID);
-    if (!m_shareMemory.create(1, QSharedMemory::ReadWrite))
+    m_sharedMemory.setKey(m_processID);
+    if (!m_sharedMemory.create(1, QSharedMemory::ReadWrite))
     {
         qFatal("%s", tr("The current application is already running in the system").toUtf8().constData());
     }
