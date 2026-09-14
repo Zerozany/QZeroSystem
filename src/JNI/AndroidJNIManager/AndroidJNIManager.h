@@ -23,11 +23,9 @@ class QZERO_API AndroidJNIManager : public QObject
     Q_OBJECT
     Q_PROPERTY(QString activityUrl READ activityUrl WRITE setActivityUrl NOTIFY activityUrlChanged)
 public:
-    static auto instance(QObject* _parent = nullptr) -> AndroidJNIManager*;
+    explicit(true) AndroidJNIManager(QObject* _parent = nullptr);
 
     ~AndroidJNIManager() noexcept = default;
-
-    Q_DISABLE_COPY_MOVE(AndroidJNIManager)
 
 public:
     QString activityUrl() const;
@@ -38,8 +36,6 @@ public:
     auto callJNIMethod(const char* _jniMethod, const char* _jniType, Args... _args) noexcept -> ReturnType;
 
 private:
-    explicit(true) AndroidJNIManager(QObject* _parent = nullptr);
-
     auto connectSignal2Slot() noexcept -> void;
 
 Q_SIGNALS:

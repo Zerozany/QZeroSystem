@@ -32,9 +32,3 @@ void AndroidJNIManager::onActivityUrlChanged()
     m_callObject = QJniObject{m_activityUrl.toUtf8().constData(), "(Landroid/app/Activity;)V", QNativeInterface::QAndroidApplication::context().object<jobject>()};
 #endif
 }
-
-auto AndroidJNIManager::instance(QObject* _parent) -> AndroidJNIManager*
-{
-    static AndroidJNIManager* androidJNIManager{new AndroidJNIManager{_parent}};
-    return androidJNIManager;
-}
