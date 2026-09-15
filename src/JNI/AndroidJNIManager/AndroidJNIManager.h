@@ -23,7 +23,7 @@ class QZERO_API AndroidJNIManager : public QObject
     Q_OBJECT
     Q_PROPERTY(QString activityUrl READ activityUrl WRITE setActivityUrl NOTIFY activityUrlChanged)
 public:
-    explicit(true) AndroidJNIManager(QObject* _parent = nullptr);
+    explicit(true) AndroidJNIManager(const QString& _activityUrl = QString{}, QObject* _parent = nullptr);
 
     ~AndroidJNIManager() noexcept = default;
 

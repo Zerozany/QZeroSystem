@@ -16,9 +16,10 @@ void AndroidJNIManager::setActivityUrl(const QString& _activityUrl)
     Q_EMIT this->activityUrlChanged();
 }
 
-AndroidJNIManager::AndroidJNIManager(QObject* _parent) : QObject{_parent}
+AndroidJNIManager::AndroidJNIManager(const QString& _activityUrl, QObject* _parent) : QObject{_parent}
 {
     std::invoke(&AndroidJNIManager::connectSignal2Slot, this);
+    std::invoke(&AndroidJNIManager::setActivityUrl, this, _activityUrl);
 }
 
 auto AndroidJNIManager::connectSignal2Slot() noexcept -> void
