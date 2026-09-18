@@ -13,19 +13,19 @@ _Pragma("once");
     #define QZERO_API
 #endif
 
-class QZERO_API WinWifiManager : public QObject
+class QZERO_API WinWlanManager : public QObject
 {
     using HANDLE = void*;
     Q_OBJECT
 public:
-    static auto instance(QObject* _parent = nullptr) -> WinWifiManager*;
+    static auto instance(QObject* _parent = nullptr) -> WinWlanManager*;
 
-    ~WinWifiManager() noexcept = default;
+    ~WinWlanManager() noexcept = default;
 
-    Q_DISABLE_COPY_MOVE(WinWifiManager)
+    Q_DISABLE_COPY_MOVE(WinWlanManager)
 
 protected:
-    explicit(true) WinWifiManager(QObject* _parent = nullptr);
+    explicit(true) WinWlanManager(QObject* _parent = nullptr);
 
 private:
     auto init() noexcept -> void;

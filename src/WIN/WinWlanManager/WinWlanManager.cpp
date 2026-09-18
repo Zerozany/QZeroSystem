@@ -1,4 +1,4 @@
-#include "WinWifiManager.h"
+#include "WinWlanManager.h"
 #include <print>
 #include <span>
 #include <QDebug>
@@ -9,18 +9,18 @@
     #pragma comment(lib, "wlanapi.lib")
 #endif
 
-auto WinWifiManager::instance(QObject* _parent) -> WinWifiManager*
+auto WinWlanManager::instance(QObject* _parent) -> WinWlanManager*
 {
-    static WinWifiManager* winWifiManager{new WinWifiManager{_parent}};
+    static WinWlanManager* winWifiManager{new WinWlanManager{_parent}};
     return winWifiManager;
 }
 
-WinWifiManager::WinWifiManager(QObject* _parent) : QObject{_parent}
+WinWlanManager::WinWlanManager(QObject* _parent) : QObject{_parent}
 {
-    std::invoke(&WinWifiManager::init, this);
+    std::invoke(&WinWlanManager::init, this);
 }
 
-auto WinWifiManager::init() noexcept -> void
+auto WinWlanManager::init() noexcept -> void
 {
     auto wlanCallback{[](PWLAN_NOTIFICATION_DATA _data, PVOID _context) -> void {
         if (_data->NotificationSource != WLAN_NOTIFICATION_SOURCE_ACM)
@@ -71,7 +71,7 @@ auto WinWifiManager::init() noexcept -> void
     }
 }
 
-auto WinWifiManager::getWifiList() noexcept -> QMap<QString, quint8>
+auto WinWlanManager::getWifiList() noexcept -> QMap<QString, quint8>
 {
     PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
     QMap<QString, quint8>     wifiList{};
@@ -119,7 +119,7 @@ auto WinWifiManager::getWifiList() noexcept -> QMap<QString, quint8>
     return wifiList;
 }
 
-auto WinWifiManager::currentWifiName() noexcept -> QString
+auto WinWlanManager::currentWifiName() noexcept -> QString
 {
     QString currentWifiStr{};
     do
@@ -158,7 +158,7 @@ auto WinWifiManager::currentWifiName() noexcept -> QString
     return currentWifiStr;
 }
 
-auto WinWifiManager::disconnectWifi() noexcept -> bool
+auto WinWlanManager::disconnectWifi() noexcept -> bool
 {
     PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
@@ -206,7 +206,7 @@ auto WinWifiManager::disconnectWifi() noexcept -> bool
     return true;
 }
 
-auto WinWifiManager::connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
+auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
 {
     static auto wifiProfileHead{[](const std::string& _ssid, const std::string& _password) -> std::wstring {
         std::string utf8Xml{std::format(
