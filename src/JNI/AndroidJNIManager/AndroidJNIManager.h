@@ -25,7 +25,7 @@ class QZERO_API AndroidJNIManager : public QObject
 public:
     explicit(true) AndroidJNIManager(QObject* _parent = nullptr);
 
-    explicit(true) AndroidJNIManager(const QString& _activityUrl = QString{}, QObject* _parent = nullptr);
+    explicit(true) AndroidJNIManager(const QString& _activityUrl, QObject* _parent = nullptr);
 
     ~AndroidJNIManager() noexcept = default;
 
