@@ -35,6 +35,8 @@ public:
 
     auto currentWifiName() noexcept -> QString;
 
+    auto currentWifiSignalQuality() noexcept -> int;
+
     [[nodiscard]] auto disconnectWifi() noexcept -> bool;
 
     [[nodiscard]] auto connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;

@@ -158,6 +158,54 @@ auto WinWlanManager::currentWifiName() noexcept -> QString
     return currentWifiStr;
 }
 
+auto WinWlanManager::currentWifiSignalQuality() noexcept -> int
+{
+    int signalQuality{-1};
+
+    do
+    {
+        PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
+
+        if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
+        {
+            std::println("WlanEnumInterfaces failed with error: {}", dwResult);
+            break;
+        }
+        if (pIfList->dwNumberOfItems == 0)
+        {
+            WlanFreeMemory(pIfList);
+            break;
+        }
+        for (DWORD i{0}; i < pIfList->dwNumberOfItems; ++i)
+        {
+            PWLAN_INTERFACE_INFO pIfInfo{&pIfList->InterfaceInfo[i]};
+            if (pIfInfo->isState != wlan_interface_state_connected)
+            {
+                continue;
+            }
+            PWLAN_CONNECTION_ATTRIBUTES pConnectInfo{nullptr};
+            DWORD                       connectInfoSize{sizeof(WLAN_CONNECTION_ATTRIBUTES)};
+            WLAN_OPCODE_VALUE_TYPE      opCode{wlan_opcode_value_type_invalid};
+            DWORD                       dwResult{WlanQueryInterface(m_hClient, &pIfInfo->InterfaceGuid, wlan_intf_opcode_current_connection, nullptr,
+                                                                    &connectInfoSize, reinterpret_cast<PVOID*>(&pConnectInfo), &opCode)};
+            if (dwResult != ERROR_SUCCESS)
+            {
+                std::println("WlanQueryInterface failed with error: {}", dwResult);
+                continue;
+            }
+            if (pConnectInfo->isState == wlan_interface_state_connected)
+            {
+                signalQuality = static_cast<int>(pConnectInfo->wlanAssociationAttributes.wlanSignalQuality);
+            }
+            WlanFreeMemory(pConnectInfo);
+            break;
+        }
+        WlanFreeMemory(pIfList);
+
+    } while (false);
+    return signalQuality;
+}
+
 auto WinWlanManager::disconnectWifi() noexcept -> bool
 {
     PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
