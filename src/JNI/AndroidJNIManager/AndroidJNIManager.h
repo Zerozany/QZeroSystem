@@ -27,7 +27,7 @@ public:
 
     explicit(true) AndroidJNIManager(const QString& _activityUrl, QObject* _parent = nullptr);
 
-    ~AndroidJNIManager() noexcept = default;
+    virtual ~AndroidJNIManager() noexcept = default;
 
 public:
     QString activityUrl() const;
@@ -37,8 +37,8 @@ public:
     template <typename ReturnType = void, typename... Args>
     auto callJNIMethod(const char* _jniMethod, const char* _jniType, Args... _args) noexcept -> ReturnType;
 
-private:
-    auto connectSignal2Slot() noexcept -> void;
+protected:
+    virtual auto connectSignal2Slot() noexcept -> void;
 
 Q_SIGNALS:
     void activityUrlChanged();

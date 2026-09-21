@@ -23,6 +23,11 @@ WinWlanManager::WinWlanManager(QObject* _parent) : QObject{_parent}
 auto WinWlanManager::init() noexcept -> void
 {
     auto wlanCallback{[](PWLAN_NOTIFICATION_DATA _data, PVOID _context) -> void {
+        auto* self{static_cast<WinWlanManager*>(_context)};
+        if (!self)
+        {
+            return;
+        }
         if (_data->NotificationSource != WLAN_NOTIFICATION_SOURCE_ACM)
         {
             return;
@@ -39,20 +44,19 @@ auto WinWlanManager::init() noexcept -> void
             }
             case wlan_notification_acm_connection_complete:  // 成功连接到 Wi-Fi，网络已建立
             {
-                auto* pConnData = static_cast<PWLAN_CONNECTION_NOTIFICATION_DATA>(_data->pData);
-                if (pConnData->wlanReasonCode == WLAN_REASON_CODE_SUCCESS)
+                if (static_cast<PWLAN_CONNECTION_NOTIFICATION_DATA>(_data->pData)->wlanReasonCode == WLAN_REASON_CODE_SUCCESS)
                 {
-                    qDebug() << "Wlan Connected!";
+                    Q_EMIT self->connectSuccessful();
                 }
                 else
                 {
-                    qDebug() << "Wlan Connected Failed, reason:" << pConnData->wlanReasonCode;
+                    Q_EMIT self->connectFailed();
                 }
                 break;
             }
             case wlan_notification_acm_disconnected:  // 已经断开 Wi-Fi
             {
-                qDebug() << "Wlan wlan_notification_acm_disconnected!";
+                Q_EMIT self->disconnectSuccessful();
                 break;
             }
             default:
