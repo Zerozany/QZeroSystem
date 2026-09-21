@@ -37,9 +37,9 @@ public:
 
     auto currentWifiSignalQuality() noexcept -> int;
 
-    [[nodiscard]] auto disconnectWifi() noexcept -> bool;
+    auto disconnectWifi() noexcept -> void;
 
-    [[nodiscard]] auto connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool;
+    auto connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> void;
 
 private:
     HANDLE m_hClient{nullptr};

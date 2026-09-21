@@ -39,14 +39,20 @@ auto WinWlanManager::init() noexcept -> void
             }
             case wlan_notification_acm_connection_complete:  // 成功连接到 Wi-Fi，网络已建立
             {
-                break;
-            }
-            case wlan_notification_acm_connection_attempt_fail:  // 连接尝试失败，例如密码错误、信号太弱、认证失败
-            {
+                auto* pConnData = static_cast<PWLAN_CONNECTION_NOTIFICATION_DATA>(_data->pData);
+                if (pConnData->wlanReasonCode == WLAN_REASON_CODE_SUCCESS)
+                {
+                    qDebug() << "Wlan Connected!";
+                }
+                else
+                {
+                    qDebug() << "Wlan Connected Failed, reason:" << pConnData->wlanReasonCode;
+                }
                 break;
             }
             case wlan_notification_acm_disconnected:  // 已经断开 Wi-Fi
             {
+                qDebug() << "Wlan wlan_notification_acm_disconnected!";
                 break;
             }
             default:
@@ -206,13 +212,13 @@ auto WinWlanManager::currentWifiSignalQuality() noexcept -> int
     return signalQuality;
 }
 
-auto WinWlanManager::disconnectWifi() noexcept -> bool
+auto WinWlanManager::disconnectWifi() noexcept -> void
 {
     PWLAN_INTERFACE_INFO_LIST pIfList{nullptr};
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
     {
         std::println("WlanEnumInterfaces failed with error: {}", dwResult);
-        return false;
+        return;
     }
     PWLAN_INTERFACE_INFO pIfInfo{static_cast<WLAN_INTERFACE_INFO*>(&pIfList->InterfaceInfo[0])};
 #if false
@@ -234,7 +240,7 @@ auto WinWlanManager::disconnectWifi() noexcept -> bool
     {
         std::println("WlanDisconnect failed with error: {}", dwResult);
         WlanFreeMemory(pIfList);
-        return false;
+        return;
     }
 #if false
     // 删除 Wi-Fi 配置文件
@@ -251,10 +257,9 @@ auto WinWlanManager::disconnectWifi() noexcept -> bool
     }
 #endif
     WlanFreeMemory(pIfList);
-    return true;
 }
 
-auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> bool
+auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> void
 {
     static auto wifiProfileHead{[](const std::string& _ssid, const std::string& _password) -> std::wstring {
         std::string utf8Xml{std::format(
@@ -292,7 +297,7 @@ auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& 
     if (DWORD dwResult{WlanEnumInterfaces(m_hClient, nullptr, &pIfList)}; dwResult != ERROR_SUCCESS)
     {
         std::println("WlanEnumInterfaces failed: {}", dwResult);
-        return false;
+        return;
     }
     PWLAN_INTERFACE_INFO pIfInfo{static_cast<WLAN_INTERFACE_INFO*>(&pIfList->InterfaceInfo[0])};
     std::wstring         wStr{wifiProfileHead(_ssid, _password)};
@@ -301,7 +306,7 @@ auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& 
     {
         std::println("WlanSetProfile failed: {}", dwResult);
         WlanFreeMemory(pIfList);
-        return false;
+        return;
     }
     std::wstring                                wStrProfileName{_ssid.begin(), _ssid.end()};
     std::unique_ptr<WLAN_CONNECTION_PARAMETERS> pConPara{std::make_unique<WLAN_CONNECTION_PARAMETERS>()};
@@ -315,7 +320,6 @@ auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& 
     {
         std::println("WlanConnect failed with error: {}", dwResult);
         WlanFreeMemory(pIfList);
-        return false;
+        return;
     }
-    return true;
 }
