@@ -42,11 +42,11 @@ public:
     auto connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> void;
 
 Q_SIGNALS:
-    void connectSuccessful();
+    void wifiConnectSuccessful();
 
-    void connectFailed();
+    void wifiConnectFailed();
 
-    void disconnectSuccessful();
+    void wifiLost();
 
 private:
     HANDLE m_hClient{nullptr};

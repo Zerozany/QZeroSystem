@@ -46,17 +46,17 @@ auto WinWlanManager::init() noexcept -> void
             {
                 if (static_cast<PWLAN_CONNECTION_NOTIFICATION_DATA>(_data->pData)->wlanReasonCode == WLAN_REASON_CODE_SUCCESS)
                 {
-                    Q_EMIT self->connectSuccessful();
+                    Q_EMIT self->wifiConnectSuccessful();
                 }
                 else
                 {
-                    Q_EMIT self->connectFailed();
+                    Q_EMIT self->wifiConnectFailed();
                 }
                 break;
             }
             case wlan_notification_acm_disconnected:  // 已经断开 Wi-Fi
             {
-                Q_EMIT self->disconnectSuccessful();
+                Q_EMIT self->wifiLost();
                 break;
             }
             default:
