@@ -263,7 +263,7 @@ auto WinWlanManager::disconnectWifi() noexcept -> void
     WlanFreeMemory(pIfList);
 }
 
-auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> void
+auto WinWlanManager::connectToWifi(const QString& _ssid, const QString& _password) noexcept -> void
 {
     static auto wifiProfileHead{[](const std::string& _ssid, const std::string& _password) -> std::wstring {
         std::string utf8Xml{std::format(
@@ -304,7 +304,7 @@ auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& 
         return;
     }
     PWLAN_INTERFACE_INFO pIfInfo{static_cast<WLAN_INTERFACE_INFO*>(&pIfList->InterfaceInfo[0])};
-    std::wstring         wStr{wifiProfileHead(_ssid, _password)};
+    std::wstring         wStr{wifiProfileHead(_ssid.toStdString(), _password.toStdString())};
     WLAN_REASON_CODE     wlanReason{};
     if (DWORD dwResult{WlanSetProfile(m_hClient, &pIfInfo->InterfaceGuid, 0, wStr.c_str(), nullptr, TRUE, nullptr, &wlanReason)}; dwResult != ERROR_SUCCESS)
     {
@@ -312,7 +312,7 @@ auto WinWlanManager::connectToWifi(const std::string& _ssid, const std::string& 
         WlanFreeMemory(pIfList);
         return;
     }
-    std::wstring                                wStrProfileName{_ssid.begin(), _ssid.end()};
+    std::wstring                                wStrProfileName{_ssid.toStdWString().begin(), _ssid.toStdWString().end()};
     std::unique_ptr<WLAN_CONNECTION_PARAMETERS> pConPara{std::make_unique<WLAN_CONNECTION_PARAMETERS>()};
     pConPara->wlanConnectionMode = wlan_connection_mode_profile;
     pConPara->strProfile         = wStrProfileName.c_str();

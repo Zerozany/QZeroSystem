@@ -39,7 +39,7 @@ public:
 
     auto disconnectWifi() noexcept -> void;
 
-    auto connectToWifi(const std::string& _ssid, const std::string& _password) noexcept -> void;
+    auto connectToWifi(const QString& _ssid, const QString& _password) noexcept -> void;
 
 Q_SIGNALS:
     void wifiConnectSuccessful();
