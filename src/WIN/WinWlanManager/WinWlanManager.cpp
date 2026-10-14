@@ -312,7 +312,7 @@ auto WinWlanManager::connectToWifi(const QString& _ssid, const QString& _passwor
         WlanFreeMemory(pIfList);
         return;
     }
-    std::wstring                                wStrProfileName{_ssid.toStdWString().begin(), _ssid.toStdWString().end()};
+    std::wstring                                wStrProfileName{_ssid.toStdWString()};
     std::unique_ptr<WLAN_CONNECTION_PARAMETERS> pConPara{std::make_unique<WLAN_CONNECTION_PARAMETERS>()};
     pConPara->wlanConnectionMode = wlan_connection_mode_profile;
     pConPara->strProfile         = wStrProfileName.c_str();
