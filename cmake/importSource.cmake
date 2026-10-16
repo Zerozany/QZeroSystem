@@ -4,9 +4,8 @@ if(ANDROID)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/**/*.cpp"
     )
 
-    file(GLOB INCLUDEDIR
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/*/"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/**/*/"
+    file(GLOB_RECURSE INCLUDEDIR LIST_DIRECTORIES true
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/JNI/*"
     )
 
 elseif(WIN32)
@@ -15,21 +14,10 @@ elseif(WIN32)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/**/*.cpp"
     )
 
-    file(GLOB INCLUDEDIR
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/*/"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/**/*/"
+    file(GLOB_RECURSE INCLUDEDIR LIST_DIRECTORIES true
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/WIN/*"
     )
 endif()
-
-file(GLOB COMMSRCFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/**/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/**/*.cpp"
-)
-
-file(GLOB COMMINCLUDEDIR
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*/"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/Common/**/*/"
-)
 
 target_sources(${PROJECT_NAME}
     PRIVATE
@@ -37,8 +25,8 @@ target_sources(${PROJECT_NAME}
     ${COMMSRCFILES}
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    ${INCLUDEDIR}
-    ${COMMINCLUDEDIR}
-)
+foreach(_DIR ${INCLUDEDIR})
+    if(IS_DIRECTORY ${_DIR})
+        target_include_directories(${PROJECT_NAME} PUBLIC ${_DIR})
+    endif()
+endforeach()
